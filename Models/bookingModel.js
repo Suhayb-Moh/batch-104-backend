@@ -20,13 +20,15 @@ const bookingSchema = mongoose.Schema({
   fromDateTime: {
     type: Date,
     required: true,
+    default: Date.now(),
   },
-  //   returnDateTime: {
-  //     type: String,
-  //     required: true,
-  //   },
+  returnDateTime: {
+    type: Date,
+    required: true,
+  },
   Amount: {
     type: mongoose.Types.ObjectId,
+    ref: "categories",
   },
   status: {
     type: String,
@@ -36,6 +38,7 @@ const bookingSchema = mongoose.Schema({
   plateNumber: {
     type: mongoose.Types.ObjectId,
     required: true,
+    ref: "cars",
   },
 });
 

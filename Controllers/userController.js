@@ -58,3 +58,41 @@ exports.login = async (req, res) => {
     res.status(404).json({ message: "error" });
   }
 };
+
+// Change password
+
+exports.changePassword = async (req, res) => {
+  try {
+    const findUser = await User.findOne({ email: req.body.email });
+    if (!findUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    let compare = await bcrypt.compare(req.body.oldPassword, findUser.password);
+    if (compare == false) {
+      return res.status(400).json({ message: "Password is incorrect" });
+    }
+    if (req.body.newPassword.length < 7) {
+      return res
+        .status(400)
+        .json({ message: "Password is less than 7 characters" });
+    }
+    if (req.body.newPassword === req.body.oldPassword) {
+      return res
+        .status(400)
+        .json({ message: "New Password cannot be same as old password" });
+    }
+    if (req.body.newPassword != req.body.confirmNewPassword) {
+      return res
+        .status(400)
+        .json({ message: "New password and confirm password does not match" });
+    }
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+    await User.findOneAndUpdate(
+      { email: req.body.email },
+      { password: hashedPassword }
+    );
+    return res.status(200).json({ message: "Password Changed" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

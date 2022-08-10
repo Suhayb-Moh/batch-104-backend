@@ -13,5 +13,8 @@ const billingSchema = mongoose.Schema({
   totalAmount: {
     type: Number,
   },
-  booking,
+  booking: {
+    type: mongoose.Types.ObjectId,
+    ref: "bookings",
+  },
 });
