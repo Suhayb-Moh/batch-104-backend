@@ -6,14 +6,14 @@ exports.signUp = async (req, res) => {
   try {
     if (user) {
       // check if the email is already registered
-      return res.status(200).json({
+      return res.status(409).json({
         message: "Email already registered, Please use another one",
       });
     }
 
     // check if the password is same as the confirm password
     if (req.body.password !== req.body.confirmPassword) {
-      return res.status(403).json({ message: "Passwrds do not match" });
+      return res.status(403).json({ message: "Passwords do not match" });
     }
 
     // check if the password is less then 7 characters
@@ -29,7 +29,7 @@ exports.signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(myPassword, saltRounds);
     req.body.password = hashedPassword;
     await User.create(req.body);
-    return res.status(200).json({ message: "User Created Successfully" });
+    return res.status(201).json({ message: "User Created Successfully" });
   } catch (error) {
     return res
       .status(500)

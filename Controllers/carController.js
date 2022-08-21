@@ -2,8 +2,9 @@ const Car = require("../Models/carModel");
 
 exports.createCar = async (req, res) => {
   try {
+    req.body.image = req.files.filename;
     await Car.create(req.body);
-    return res.status(200).json({ message: "Car created successfully" });
+    return res.status(200).json({ message: "Car added successfully" });
   } catch (error) {
     return res.status(404).send({
       message: `Sorry something went wrong. Please try again ${error.message}`,

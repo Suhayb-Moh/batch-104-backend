@@ -24,7 +24,7 @@ const carSchema = mongoose.Schema({
     default: true,
   },
   image: {
-    type: String,
+    type: [String],
     required: true,
   },
 });
