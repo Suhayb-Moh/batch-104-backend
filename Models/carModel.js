@@ -16,7 +16,7 @@ const carSchema = mongoose.Schema({
   },
   carCategoryName: {
     type: mongoose.Types.ObjectId,
-    ref: "category",
+    ref: "Category",
   },
   availablibiltyFlag: {
     type: Boolean,
@@ -24,7 +24,7 @@ const carSchema = mongoose.Schema({
     default: true,
   },
   image: {
-    type: [String],
+    type: String,
     required: true,
   },
 });

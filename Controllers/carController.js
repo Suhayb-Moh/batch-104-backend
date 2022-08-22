@@ -2,7 +2,7 @@ const Car = require("../Models/carModel");
 
 exports.createCar = async (req, res) => {
   try {
-    req.body.image = req.files.filename;
+    req.body.image = req.file.filename;
     await Car.create(req.body);
     return res.status(200).json({ message: "Car added successfully" });
   } catch (error) {
@@ -15,7 +15,11 @@ exports.createCar = async (req, res) => {
 // get cars
 exports.getCars = async (req, res) => {
   try {
-    const cars = await Car.find({});
+    const cars = await Car.find().populate({
+      path: "carCategoryName",
+      select: "costPerDay",
+    });
+
     return res.status(200).json({ result: cars.length, cars });
   } catch (error) {
     return res.status(500).json({

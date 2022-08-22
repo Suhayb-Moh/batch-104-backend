@@ -9,6 +9,7 @@ require("./server");
 const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
+app.use(express.static("Images"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
