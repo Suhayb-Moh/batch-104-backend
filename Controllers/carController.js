@@ -2,7 +2,12 @@ const Car = require("../Models/carModel");
 
 exports.createCar = async (req, res) => {
   try {
-    req.body.image = req.file.filename;
+    let filenames = req.files.map((file) => {
+      return file.filename;
+    });
+    console.log(filenames);
+    // req.body.image = req.files.filename;
+    // console.log(req.files);
     await Car.create(req.body);
     return res.status(200).json({ message: "Car added successfully" });
   } catch (error) {
