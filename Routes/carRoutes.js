@@ -5,22 +5,19 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/Images");
+    cb(null, "images");
   },
-  // filename: function (req, files, cb) {
-  //   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  //   let extension = files.mimetype.split("/")[1];
-  //   cb(null, files.fieldname + "-" + uniqueSuffix + "." + extension);
-  filename: function (req, file, cb) {
+  filename: function (req, files, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix);
+    let extension = files.mimetype.split("/")[1];
+    cb(null, files.fieldname + "-" + uniqueSuffix + "." + extension);
   },
 });
 
-const upload = multer({ storage: storage }).array("images", 5);
+const upload = multer({ storage: storage });
 router
   .route("/")
-  .post(upload, carController.createCar)
+  .post(upload.array("image", 6), carController.createCar)
   .get(carController.getCars);
 
 router

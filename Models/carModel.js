@@ -23,6 +23,10 @@ const carSchema = mongoose.Schema({
     required: true,
     default: true,
   },
+  rating: {
+    type: Number,
+    default: 3,
+  },
   image: {
     type: [String],
     required: true,

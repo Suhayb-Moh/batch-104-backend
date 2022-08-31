@@ -17,6 +17,9 @@ const categorySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+  },
 });
 
 const categoryModel = mongoose.model("Category", categorySchema);
