@@ -2,6 +2,7 @@ const Category = require("../Models/categoryModel");
 
 exports.createCategory = async (req, res) => {
   try {
+    req.body.image = req.file.filename;
     const category = await Category.findOne({
       categoryName: req.body.categoryName,
     });
@@ -46,7 +47,7 @@ exports.getCategory = async (req, res) => {
 // delete category
 exports.deleteCategory = async (req, res) => {
   try {
-    await findByIdAndDelete(req.params.id);
+    await Category.findByIdAndDelete(req.params.id);
     return res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
     return res
@@ -58,7 +59,7 @@ exports.deleteCategory = async (req, res) => {
 // update category
 exports.updateCategory = async (req, res) => {
   try {
-    await findByIdandUpdate(req.params.id, req.body);
+    await Category.findByIdandUpdate(req.params.id, req.body);
     return res.status(200).json({ message: `Category updated successfully` });
   } catch (error) {
     return res

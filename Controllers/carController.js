@@ -49,6 +49,17 @@ exports.getCar = async (req, res) => {
   }
 };
 
+// get cars by id
+
+exports.getCarsById = async (req, res) => {
+  try {
+    const cars = await Car.find({ carCategoryName: req.params.id });
+    return res.status(200).json({ cars });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // delete car
 
 exports.deleteCar = async (req, res) => {

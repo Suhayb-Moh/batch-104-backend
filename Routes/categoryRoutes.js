@@ -1,11 +1,24 @@
 const express = require("express");
-
+const multer = require("multer");
 const categoryController = require("../Controllers/categoryController");
 const router = express.Router();
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images");
+  },
+  filename: function (req, files, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    let extension = files.mimetype.split("/")[1];
+    cb(null, files.fieldname + "-" + uniqueSuffix + "." + extension);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 router
   .route("/")
-  .post(categoryController.createCategory)
+  .post(upload.single("image"), categoryController.createCategory)
   .get(categoryController.getCategories);
 
 router

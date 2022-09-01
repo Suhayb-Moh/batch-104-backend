@@ -26,4 +26,6 @@ router
   .get(carController.getCar)
   .delete(carController.deleteCar);
 
+router.route("/sortbyid/:id").get(carController.getCarsById);
+
 module.exports = router;
