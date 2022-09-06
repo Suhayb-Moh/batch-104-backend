@@ -1,5 +1,17 @@
 const User = require("../Models/userModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+async function createToken(value) {
+  const token = await jwt.sign(
+    {
+      expiresIn: "3h",
+      data: value,
+    },
+    process.env.JWTSECRET
+  );
+  return token;
+}
 
 exports.signUp = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -29,7 +41,13 @@ exports.signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(myPassword, saltRounds);
     req.body.password = hashedPassword;
     await User.create(req.body);
-    return res.status(201).json({ message: "User Created Successfully" });
+
+    // 5. create a token
+    const token = await createToken({ email: req.body.email });
+
+    return res
+      .status(201)
+      .json({ message: "User Created Successfully", token });
   } catch (error) {
     return res
       .status(500)
@@ -53,7 +71,9 @@ exports.login = async (req, res) => {
     if (checkedPassword == false) {
       return res.status(404).json({ message: "Wrong credentials" });
     }
-    return res.status(200).send({ message: "Logged in" });
+    // 5. create a token
+    const token = await createToken({ email: user.email });
+    return res.status(200).send({ message: "Logged in", token });
   } catch (error) {
     res.status(404).json({ message: "error" });
   }
@@ -63,7 +83,7 @@ exports.login = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-    const findUser = await User.findOne({ email: req.body.email });
+    const findUser = await User.findOne({ email: req.user.email });
     if (!findUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -88,11 +108,63 @@ exports.changePassword = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
     await User.findOneAndUpdate(
-      { email: req.body.email },
+      { email: findUser.email },
       { password: hashedPassword }
     );
+
     return res.status(200).json({ message: "Password Changed" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// get all users
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json({ result: users.length, users });
+  } catch (error) {
+    return res.status(500).json({
+      error: `Sorry something went wrong please try again ${error.message}`,
+    });
+  }
+};
+
+exports.protect = (req, res, next) => {
+  try {
+    const token = req.headers.authentication;
+    //1. token is empty
+    if (!token) {
+      return res.status(401).json({ message: "You're not Authorized" });
+    }
+    //2. token verify
+    jwt.verify(token, process.env.JWTSECRET, function (err, result) {
+      if (err) {
+        return res.status(500).json({ message: "Loggin session expired" });
+      }
+      req.user = result.data;
+    });
+    next();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// exports.checkUser = (req, res, next) => {
+//   try {
+//     const token = req.headers.authentication;
+//     if (!token) {
+//       return res.status(401).json({ message: "You're not Authorized" });
+//     }
+//     jwt.verify(token, process.env.JWTSECRET, function (err, result) {
+//       if (err) {
+//         return res.status(500).json({ message: "Loggin session expired" });
+//       }
+//     });
+//     return res.status(200).json({ message: "Authentication successful" });
+//     next();
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };

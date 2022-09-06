@@ -18,6 +18,10 @@ const carSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Category",
   },
+  carCategoryPrice: {
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
+  },
   availablibiltyFlag: {
     type: Boolean,
     required: true,

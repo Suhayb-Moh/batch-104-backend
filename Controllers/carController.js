@@ -20,10 +20,15 @@ exports.createCar = async (req, res) => {
 // get cars
 exports.getCars = async (req, res) => {
   try {
-    const cars = await Car.find().populate({
-      path: "carCategoryName",
-      select: "costPerDay",
-    });
+    const cars = await Car.find()
+      .populate({
+        path: "carCategoryName",
+        select: "categoryName",
+      })
+      .populate({
+        path: "carCategoryPrice",
+        select: "costPerDay",
+      });
 
     return res.status(200).json({ result: cars.length, cars });
   } catch (error) {
@@ -37,10 +42,15 @@ exports.getCars = async (req, res) => {
 
 exports.getCar = async (req, res) => {
   try {
-    const car = await Car.findById(req.params.id).populate({
-      path: "carCategoryName",
-      select: "costPerDay",
-    });
+    const car = await Car.findById(req.params.id)
+      .populate({
+        path: "carCategoryName",
+        select: "categoryName",
+      })
+      .populate({
+        path: "carCategoryPrice",
+        select: "costPerDay",
+      });
     return res.status(200).json({ result: car });
   } catch (error) {
     return res.status(500).json({
