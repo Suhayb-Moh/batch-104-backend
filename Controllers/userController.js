@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "Wrong credentials" });
     }
     // 5. create a token
-    const token = await createToken({ email: user.email });
+    const token = await createToken({ email: user.email, role: user.role });
     return res.status(200).send({ message: "Logged in", token });
   } catch (error) {
     res.status(404).json({ message: "error" });
@@ -151,20 +151,19 @@ exports.protect = (req, res, next) => {
   }
 };
 
-// exports.checkUser = (req, res, next) => {
-//   try {
-//     const token = req.headers.authentication;
-//     if (!token) {
-//       return res.status(401).json({ message: "You're not Authorized" });
-//     }
-//     jwt.verify(token, process.env.JWTSECRET, function (err, result) {
-//       if (err) {
-//         return res.status(500).json({ message: "Loggin session expired" });
-//       }
-//     });
-//     return res.status(200).json({ message: "Authentication successful" });
-//     next();
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
+exports.checkUser = (req, res, next) => {
+  try {
+    const token = req.headers.authentication;
+    if (!token) {
+      return res.status(401).json({ message: "You're not Authorized" });
+    }
+    jwt.verify(token, process.env.JWTSECRET, function (err, result) {
+      if (err) {
+        return res.status(500).json({ message: "Loggin session expired" });
+      }
+    });
+    return res.status(200).json({ message: "Authentication successful" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

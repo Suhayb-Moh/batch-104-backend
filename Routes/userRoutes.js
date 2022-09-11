@@ -9,8 +9,8 @@ router
   .route("/changePassword")
   .put(userController.protect, userController.changePassword);
 
-// router.route("/check").get(userController.checkUser);
+router.route("/check").get(userController.checkUser);
 
-// router.route("/getusers").get(userController.getUsers);
+router.route("/getusers").get(userController.getUsers);
 
 module.exports = router;
